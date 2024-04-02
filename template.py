@@ -9,27 +9,33 @@ sys.setrecursionlimit(6000)
 # Task 1: Average degree, number of bridges, number of local bridges
 def Q1(dataframe):
 
+    # Average degree
     total_degree = 0
     num_nodes = len(set(dataframe['Src']) | set(dataframe['Dst']))
 
     for node in set(dataframe['Src']) | set(dataframe['Dst']):
         total_degree += node_degree(dataframe, node)
 
-    # Compute the average degree
     average_degree = total_degree / num_nodes if num_nodes > 0 else 0
 
-    plot_degree_distribution(dataframe)
+    plot_degree_distribution(dataframe) # Plot
 
-    bridges = get_total_bridges(dataframe)
-    local_bridges = get_total_local_bridges(dataframe)
+    bridges = get_total_bridges(dataframe) # Bridges
+    local_bridges = get_total_local_bridges(dataframe) # Local bridges
 
     return [average_degree, bridges, local_bridges] # [average degree, nb bridges, nb local bridges]
 
 # Undirected graph
 # Task 2: Average similarity score between neighbors
 def Q2(dataframe):
-    # Your code here
-    return 0.0 # the average similarity score between neighbors
+
+    scores = similarity_scores(dataframe)
+
+    avg_score = sum(scores) / len(scores) #average
+
+    plot_similartiy_distribution(scores) # histogram
+
+    return avg_score # the average similarity score between neighbors
 
 # Directed graph
 # Task 3: PageRank
@@ -55,7 +61,7 @@ def Q5(dataframe):
 
 #df = pd.read_csv('powergrid.csv')
 df = pd.read_csv('test.csv')
-print("Q1", Q1(df))
+#print("Q1", Q1(df))
 print("Q2", Q2(df))
 print("Q3", Q3(df))
 print("Q4", Q4(df))

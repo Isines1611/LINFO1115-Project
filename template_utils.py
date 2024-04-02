@@ -29,14 +29,16 @@ def node_degree(df, node):
 
     return src_degree + dest_degree
 
-def common_neighbors(df, n1, n2):
+def common_neighbors(df, n1, n2, distinct=False):
     neighbors_node1 = set(df[df['Src'] == n1]['Dst']) | set(df[df['Dst'] == n1]['Src'])
     neighbors_node2 = set(df[df['Src'] == n2]['Dst']) | set(df[df['Dst'] == n2]['Src'])
 
-    common_neighbors = neighbors_node1 & neighbors_node2
-    count = len(common_neighbors)
-
-    return count
+    if(distinct == True):
+        common_neighbors = neighbors_node1 | neighbors_node2
+    else:
+        common_neighbors = neighbors_node1 & neighbors_node2
+    
+    return len(common_neighbors)
 
 
 # Q1
@@ -110,5 +112,28 @@ def plot_degree_distribution(df): # Histogram
     plt.xlabel('Degree')
     plt.ylabel('Number of Nodes')
     plt.title('Degree Distribution')
+    plt.grid(axis='y', alpha=0.75)
+    plt.show()
+
+# Q2
+def similarity_scores(df):
+    scores = []
+
+    for index, row in df.iterrows():
+        src = row['Src']
+        dst = row['Dst']
+
+        same_neighbors = common_neighbors(df, src, dst)
+        distinct_neighbors = common_neighbors(df, src, dst, True)
+
+        scores.append(same_neighbors/distinct_neighbors)
+
+    return scores
+
+def plot_similartiy_distribution(scores):
+    plt.hist(scores, bins=20, edgecolor='black')
+    plt.xlabel('Similarity Score')
+    plt.ylabel('Frequency')
+    plt.title('Similarity Score Distribution')
     plt.grid(axis='y', alpha=0.75)
     plt.show()
