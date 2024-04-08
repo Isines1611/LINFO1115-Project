@@ -30,11 +30,9 @@ def Q2(dataframe):
 
     scores = similarity_scores(dataframe)
 
-    avg_score = sum(scores) / len(scores) #average
+    plot_similartiy_distribution(scores) # plot the histogram
 
-    #plot_similartiy_distribution(scores) # plot the histogram
-
-    return avg_score # the average similarity score between neighbors
+    return np.mean(scores) # the average similarity score between neighbors
 
 # Directed graph
 # Task 3: PageRank
@@ -56,15 +54,20 @@ def Q4(dataframe):
 # Undirected graph
 # Task 5: Betweenness centrality
 def Q5(dataframe):
-    # Your code here
-    return [0, 0.0] # the id of the node with the highest betweenness centrality, the associated betweenness centrality value.
+
+    adj_list = get_adj_list(dataframe)
+    betweenness_centrality = get_betweenness_centrality(adj_list)
+
+    index = max(betweenness_centrality, key=betweenness_centrality.get)
+
+    return [index, betweenness_centrality[index]] # the id of the node with the highest betweenness centrality, the associated betweenness centrality value.
 
 # you can write additionnal functions that can be used in Q1-Q5 functions in the file "template_utils.py", a specific place is available to copy them at the end of the Inginious task.
 
 df = pd.read_csv('powergrid.csv')
-#df = pd.read_csv('test.csv')
+#df = pd.read_csv('new.csv')
 #print("Q1", Q1(df))
 #print("Q2", Q2(df))
 print("Q3", Q3(df))
-print("Q4", Q4(df))
-print("Q5", Q5(df))
+#print("Q4", Q4(df))
+#print("Q5", Q5(df))

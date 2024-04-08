@@ -4,9 +4,9 @@
 # First, import the libraries needed for your helper functions
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-#import networkx as nx# Tests
+import matplotlib.pyplot as plt # For plots
+import networkx as nx# Tests
 
 # Q1 Helper
 
@@ -29,33 +29,52 @@ def common_neighbors(df, n1, n2, distinct=False):
     
     return len(common_neighbors)
 
-# Q3 Helper
+# Q5 Helpers
 
-def get_all_nodes(df): # return a list with all nodes appearing once
-    nodes = set(df['Src']).union(set(df['Dst']))
-    return list(nodes)
+def get_adj_list(df):
+    adj_list = {}
+    
+    for index, row in df.iterrows():
+        src = row['Src']
+        dst = row['Dst']
+
+        if src not in adj_list:
+            adj_list[src] = []
+        
+        if dst not in adj_list:
+            adj_list[dst] = []
+
+        adj_list[src].append(dst)
+        adj_list[dst].append(src)
+    
+    return adj_list
 
 # Plot Diagrams Functions
 
 def plot_degree_distribution(df): # Histogram
     all_nodes = pd.concat([df['Src'], df['Dst']])
-    
     node_counts = all_nodes.value_counts()
 
-    # Plot histogram of degree distribution
     plt.hist(node_counts, bins=range(1, max(node_counts)+2), align='left', edgecolor='black')
     plt.xlabel('Degree')
     plt.ylabel('Number of Nodes')
     plt.title('Degree Distribution')
     plt.grid(axis='y', alpha=0.75)
+    plt.savefig("q1.png")
     plt.show()
 
 def plot_similartiy_distribution(scores):
-    plt.hist(scores, bins=20, edgecolor='black')
+    sorted_scores = np.sort(scores)
+    
+    n = len(sorted_scores)
+    cumulative_percentage = np.arange(1, n + 1) / n * 100
+    
+    plt.plot(sorted_scores, cumulative_percentage, marker='o', linestyle='-')
     plt.xlabel('Similarity Score')
-    plt.ylabel('Frequency')
-    plt.title('Similarity Score Distribution')
-    plt.grid(axis='y', alpha=0.75)
+    plt.ylabel('Percentage of Edges (%)')
+    plt.title('Cumulative Distribution of Similarity Scores')
+    plt.grid(True)
+    plt.savefig("q2.png")
     plt.show()
 
 # Q1
@@ -68,9 +87,8 @@ def get_total_local_bridges(df):
         dst = row['Dst']
 
         total_both = common_neighbors(df, src, dst)
-        total_neighbor = node_degree(df, src) + node_degree(df, dst) - 2
 
-        if(total_both / total_neighbor) == 0:
+        if(total_both) == 0:
             total += 1
 
     return total
@@ -127,23 +145,18 @@ def similarity_scores(df):
         src = row['Src']
         dst = row['Dst']
 
-        same_neighbors = common_neighbors(df, src, dst)
-        distinct_neighbors = common_neighbors(df, src, dst, True)
+        neighbors_src = set(df[df['Src'] == src]['Dst']) | set(df[df['Dst'] == src]['Src'])
+        neighbors_dst = set(df[df['Src'] == dst]['Dst']) | set(df[df['Dst'] == dst]['Src'])
 
-        scores.append(same_neighbors/distinct_neighbors)
+        common_neighbors = len(neighbors_src.intersection(neighbors_dst))
+        total_distinct_neighbors = len(neighbors_src.union(neighbors_dst))
+
+        similarity_score = common_neighbors / total_distinct_neighbors
+        scores.append(similarity_score)
 
     return scores
 
 # Q3
-"""
-def pagerank_test(df): # For tests purposes
-    # Create a directed graph from the DataFrame
-    G = nx.from_pandas_edgelist(df, 'Src', 'Dst', create_using=nx.DiGraph())
-
-    # Compute PageRank scores using NetworkX's built-in function
-    pagerank_scores = nx.pagerank(G, alpha=0.85)
-
-    return pagerank_scores"""
 
 def pagerank(df):
     damping_factor = 0.85
@@ -181,4 +194,30 @@ def pagerank(df):
     scores = {node: score for node, score in zip(nodes, scores)}
 
     return scores
+
+# Q5
+
+def get_betweenness_centrality(adj): # en 2min
+    betweenness_centrality = {node: 0 for node in adj.keys()}
+
+    for source in adj.keys():
+        visited = {source}
+        queue = [(source, [source])]
+
+        while queue:
+            curr, path = queue.pop(0)
+
+            for neighbor in adj[curr]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, path + [neighbor]))
+                    
+                    for nb in (path+[neighbor])[1:-1]:
+                        betweenness_centrality[nb] += 1
+
+            
+
+    return betweenness_centrality
+
+
 
