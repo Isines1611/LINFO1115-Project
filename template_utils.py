@@ -77,6 +77,16 @@ def plot_similartiy_distribution(scores):
     plt.savefig("q2.png")
     plt.show()
 
+    
+def plot_number_path_for_length(length) :
+    number = [i for i in range(50)]
+    plt.plot(number, length[0:50], color='Blue')
+    plt.xlabel('Lengths of paths')
+    plt.ylabel('Number of paths')
+    plt.title('Number of path with a certain Length')
+    plt.savefig("q4.png")
+    plt.show()
+
 # Q1
 
 def get_total_local_bridges(df):
@@ -195,6 +205,44 @@ def pagerank(df):
 
     return scores
 
+# Q4 
+
+def Floyd_Warshall(df):
+    """
+    Input : Matrice de coût C
+    Output : Matrice des plus courts chemins D 
+    """
+    neighbor_count = np.ones(4941).tolist()
+    default = np.matrix(np.ones((4941,4941)) * np.inf)
+    np.fill_diagonal(default,0)
+    dist = default.tolist()
+    length = dist
+    for _, row in df.iterrows():
+        src = row['Src']
+        dest = row['Dst']
+        dist[src-1][dest-1] = 1
+        dist[dest-1][src-1] = 1
+        neighbor_count[src-1]+=1
+        neighbor_count[dest-1]+=1
+
+    n = len(dist)
+    for k in range(n):
+        for i in range(n):
+            for j in range(i+1):
+                #Si le plus court chemin actuel entre les noeuds j et k est plus grand qu'un chemin allant de j à k en passant par un noeud intermédiaire i
+                #Alors le plus court chemin entre les noeuds j et k devient celui-ci
+                
+                if dist[i][j] > dist[i][k] + dist[k][j]:
+                    length[j][i] = k+1
+                    length[i][j] = k+1
+                    dist[j][i] = dist[i][k] + dist[k][j]
+                    dist[i][j] = dist[i][k] + dist[k][j]
+            
+    return  np.matrix(dist),np.matrix(length)
+    
+
+
+
 # Q5
 
 def get_betweenness_centrality(adj): # en 2min
@@ -218,6 +266,5 @@ def get_betweenness_centrality(adj): # en 2min
             
 
     return betweenness_centrality
-
 
 
