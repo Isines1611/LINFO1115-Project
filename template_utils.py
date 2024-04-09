@@ -229,8 +229,6 @@ def Floyd_Warshall(df):
     for k in range(n):
         for i in range(n):
             for j in range(i+1):
-                #Si le plus court chemin actuel entre les noeuds j et k est plus grand qu'un chemin allant de j à k en passant par un noeud intermédiaire i
-                #Alors le plus court chemin entre les noeuds j et k devient celui-ci
                 
                 if dist[i][j] > dist[i][k] + dist[k][j]:
                     length[j][i] = k+1

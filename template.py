@@ -62,7 +62,7 @@ def Q4(dataframe):
                 src_node = i+1
                 dest_node = j+1
     most_common_length = np.argmax(number_of_len)
-    #plot_number_path_for_length(number_of_len)
+    plot_number_path_for_length(number_of_len)
     return [src_node,dest_node,diameter,most_common_length]# at index 0 the number of shortest paths of lenght 0, at index 1 the number of shortest paths of length 1, ...
     # Note that we will ignore the value at index 0 as it can be set to 0 or the number of nodes in the graph
 
