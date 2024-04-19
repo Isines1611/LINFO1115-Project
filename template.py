@@ -30,7 +30,7 @@ def Q2(dataframe):
 
     scores = similarity_scores(dataframe)
 
-    plot_similartiy_distribution(scores) # plot the histogram
+    #plot_similartiy_distribution(scores) # plot the histogram
 
     return np.mean(scores) # the average similarity score between neighbors
 

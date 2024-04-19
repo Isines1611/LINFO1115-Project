@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt # For plots
-import networkx as nx# Tests
+#import networkx as nx# Tests
 
 # Q1 Helper
 
@@ -76,7 +76,6 @@ def plot_similartiy_distribution(scores):
     plt.grid(True)
     plt.savefig("q2.png")
     plt.show()
-
     
 def plot_number_path_for_length(length) :
     number = [i for i in range(50)]
@@ -104,7 +103,7 @@ def get_total_local_bridges(df):
     return total
 
 def get_total_bridges(df): # pour le coup c'est pas moi qui l'ai fait
-    graph = {}  # create an adjacency list representation of the graph
+    graph = {}
     for index, row in df.iterrows():
         src = row['Src']
         dest = row['Dst']
@@ -208,10 +207,6 @@ def pagerank(df):
 # Q4 
 
 def Floyd_Warshall(df):
-    """
-    Input : Matrice de coût C
-    Output : Matrice des plus courts chemins D 
-    """
     neighbor_count = np.ones(4941).tolist()
     default = np.matrix(np.ones((4941,4941)) * np.inf)
     np.fill_diagonal(default,0)
@@ -238,9 +233,6 @@ def Floyd_Warshall(df):
             
     return  np.matrix(dist),np.matrix(length)
     
-
-
-
 # Q5
 
 def get_betweenness_centrality(adj): # en 2min
@@ -264,5 +256,4 @@ def get_betweenness_centrality(adj): # en 2min
             
 
     return betweenness_centrality
-
 
